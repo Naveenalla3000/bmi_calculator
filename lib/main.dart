@@ -10,8 +10,9 @@ class MyMaterialApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: BmiCalculatorMaterialPage(),
+    return MaterialApp(
+      theme: ThemeData.dark(),
+      home: const BmiCalculatorMaterialPage(),
     );
   }
 }

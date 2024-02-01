@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+enum Gender { male, female }
+
 class BmiCalculatorMaterialPage extends StatefulWidget {
   const BmiCalculatorMaterialPage({super.key});
 
@@ -9,6 +11,18 @@ class BmiCalculatorMaterialPage extends StatefulWidget {
 }
 
 class _BmiCalculatorMaterialPageState extends State<BmiCalculatorMaterialPage> {
+  // final TextEditingController textEditingControllerInputGender =
+  //   TextEditingController();
+  final TextEditingController textEditingControllerInputHeightInCms =
+      TextEditingController();
+  final TextEditingController textEditingControllerInputWeightInKgs =
+      TextEditingController();
+  Gender? selectedGender;
+  double calculatedBmiValue = 0;
+
+  final Color maleColor = Colors.blue;
+  final Color femaleColor = Colors.pinkAccent;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,23 +51,34 @@ class _BmiCalculatorMaterialPageState extends State<BmiCalculatorMaterialPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      setState(() {
+                        selectedGender = Gender.male;
+                      });
+                    },
                     style: TextButton.styleFrom(
-                        elevation: 10,
-                        shape: const CircleBorder(),
-                        padding: const EdgeInsets.all(30),
-                        backgroundColor: Colors.black38),
-                    child: const Column(
+                      elevation: 10,
+                      shape: const CircleBorder(),
+                      padding: const EdgeInsets.all(30),
+                      backgroundColor: selectedGender == Gender.male
+                          ? maleColor
+                          : Colors.black38,
+                    ),
+                    child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(
+                        const Icon(
                           Icons.male_rounded,
                           size: 50,
                           color: Colors.white,
                         ),
                         Text(
-                          'Male',
-                          style: TextStyle(
+                          Gender.male
+                              .toString()
+                              .split('.')
+                              .last
+                              .capitaliseFirstLetter(),
+                          style: const TextStyle(
                             fontSize: 16,
                             color: Colors.white,
                           ),
@@ -63,21 +88,31 @@ class _BmiCalculatorMaterialPageState extends State<BmiCalculatorMaterialPage> {
                     ),
                   ),
                   TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      setState(() {
+                        selectedGender = Gender.female;
+                      });
+                    },
                     style: TextButton.styleFrom(
                       elevation: 10,
                       padding: const EdgeInsets.all(30),
-                      backgroundColor: Colors.black38,
+                      backgroundColor: selectedGender == Gender.female
+                          ? femaleColor
+                          : Colors.black38,
                       shape: const CircleBorder(),
                     ),
-                    child: const Column(
+                    child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(Icons.female_rounded,
+                        const Icon(Icons.female_rounded,
                             size: 50, color: Colors.white),
                         Text(
-                          'Female',
-                          style: TextStyle(
+                          Gender.female
+                              .toString()
+                              .split('.')
+                              .last
+                              .capitaliseFirstLetter(),
+                          style: const TextStyle(
                             fontSize: 16,
                             color: Colors.white,
                           ),
@@ -90,11 +125,15 @@ class _BmiCalculatorMaterialPageState extends State<BmiCalculatorMaterialPage> {
               ),
               const SizedBox(height: 30),
               TextField(
+                controller: textEditingControllerInputHeightInCms,
                 style: const TextStyle(
                   color: Colors.black,
                 ),
                 decoration: InputDecoration(
                   hintText: "Please Enter your height (cm)",
+                  hintStyle: const TextStyle(
+                    color: Colors.black38,
+                  ),
                   filled: true,
                   fillColor: Colors.white,
                   border: OutlineInputBorder(
@@ -109,11 +148,15 @@ class _BmiCalculatorMaterialPageState extends State<BmiCalculatorMaterialPage> {
               ),
               const SizedBox(height: 30),
               TextField(
+                controller: textEditingControllerInputWeightInKgs,
                 style: const TextStyle(
                   color: Colors.black,
                 ),
                 decoration: InputDecoration(
                   hintText: "Please Enter your weight (kg)",
+                  hintStyle: const TextStyle(
+                    color: Colors.black38,
+                  ),
                   filled: true,
                   fillColor: Colors.white,
                   border: OutlineInputBorder(
@@ -125,9 +168,11 @@ class _BmiCalculatorMaterialPageState extends State<BmiCalculatorMaterialPage> {
               const SizedBox(
                 height: 30,
               ),
-              const Text(
-                '0',
-                style: TextStyle(
+              Text(
+                calculatedBmiValue != 0
+                    ? calculatedBmiValue.toStringAsFixed(2)
+                    : calculatedBmiValue.toStringAsFixed(0),
+                style: const TextStyle(
                   fontSize: 30,
                   fontStyle: FontStyle.italic,
                   fontWeight: FontWeight.w700,
@@ -138,7 +183,23 @@ class _BmiCalculatorMaterialPageState extends State<BmiCalculatorMaterialPage> {
                 height: 30,
               ),
               ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  double? height = double.tryParse(
+                      textEditingControllerInputHeightInCms.text);
+                  double? weight = double.tryParse(
+                      textEditingControllerInputWeightInKgs.text);
+                  if (height != null &&
+                      weight != null &&
+                      height > 0 &&
+                      weight > 0) {
+                    setState(
+                      () {
+                        calculatedBmiValue =
+                            weight / (height / 100 * height / 100);
+                      },
+                    );
+                  }
+                },
                 style: ElevatedButton.styleFrom(
                     elevation: 10,
                     backgroundColor: Colors.black38,
@@ -151,7 +212,7 @@ class _BmiCalculatorMaterialPageState extends State<BmiCalculatorMaterialPage> {
                   child: Text(
                     'Calculate',
                     style: TextStyle(
-                      fontSize: 24,
+                      fontSize: 20,
                       color: Colors.white,
                     ),
                     textAlign: TextAlign.center,
@@ -165,3 +226,9 @@ class _BmiCalculatorMaterialPageState extends State<BmiCalculatorMaterialPage> {
     );
   }
 }
+
+extension CapitaliseFirstLetter on String {
+  String capitaliseFirstLetter() => this[0].toUpperCase() + substring(1);
+}
+
+// todo: todays task is to show the variation in bmi based on the gender that the user chosen
