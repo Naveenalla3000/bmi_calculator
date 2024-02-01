@@ -11,8 +11,6 @@ class BmiCalculatorMaterialPage extends StatefulWidget {
 }
 
 class _BmiCalculatorMaterialPageState extends State<BmiCalculatorMaterialPage> {
-  // final TextEditingController textEditingControllerInputGender =
-  //   TextEditingController();
   final TextEditingController textEditingControllerInputHeightInCms =
       TextEditingController();
   final TextEditingController textEditingControllerInputWeightInKgs =
@@ -22,6 +20,22 @@ class _BmiCalculatorMaterialPageState extends State<BmiCalculatorMaterialPage> {
 
   final Color maleColor = Colors.blue;
   final Color femaleColor = Colors.pinkAccent;
+
+  // build function must be short as much as possible because when a state gets change the build function gets triggered
+
+  void computerBmiValue() {
+    double? height =
+        double.tryParse(textEditingControllerInputHeightInCms.text);
+    double? weight =
+        double.tryParse(textEditingControllerInputWeightInKgs.text);
+    if (height != null && weight != null && height > 0 && weight > 0) {
+      setState(
+        () {
+          calculatedBmiValue = weight / (height / 100 * height / 100);
+        },
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -183,23 +197,7 @@ class _BmiCalculatorMaterialPageState extends State<BmiCalculatorMaterialPage> {
                 height: 30,
               ),
               ElevatedButton(
-                onPressed: () {
-                  double? height = double.tryParse(
-                      textEditingControllerInputHeightInCms.text);
-                  double? weight = double.tryParse(
-                      textEditingControllerInputWeightInKgs.text);
-                  if (height != null &&
-                      weight != null &&
-                      height > 0 &&
-                      weight > 0) {
-                    setState(
-                      () {
-                        calculatedBmiValue =
-                            weight / (height / 100 * height / 100);
-                      },
-                    );
-                  }
-                },
+                onPressed: computerBmiValue,
                 style: ElevatedButton.styleFrom(
                     elevation: 10,
                     backgroundColor: Colors.black38,
