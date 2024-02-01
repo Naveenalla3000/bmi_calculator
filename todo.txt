@@ -1,0 +1,7 @@
+    Agenda
+1.Creating the Flutter Applications
+2.Setup the MaterialApp
+3.Creating UI
+4.Adding Functionalities
+5.Quality Assurance
+6.Deployment
